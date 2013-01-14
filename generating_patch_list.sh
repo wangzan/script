@@ -18,11 +18,15 @@ OUT=
 function getopts_args()  
 {  
     #echo -e "\n### getopts_act ###\n"
-    while getopts h:t:o: ARGS
+    while getopts ht:o: ARGS
     do
     case $ARGS in
         h)
-            echo "help !!!!!!!!!!!!!!!!"
+            echo "Usage:"
+            echo "      -t : tags from..to you want to get patch"
+            echo "      -o : set the log output path"
+            echo "      -h : get the help content"
+            exit
             ;;
         t)
             #echo "get the tag1 and tag2 !!!"
@@ -36,7 +40,8 @@ function getopts_args()
             #echo "out path is $OUT"
             ;;
          *)
-             echo "Unknow option: $ARGS"
+            echo "Unknow option: $ARGS"
+            exit
             ;;
     esac
     done
@@ -63,16 +68,19 @@ function generating_patch_list()
         if [ ! -d $PATCH_DIR ] ; then
             mkdir -p $PATCH_DIR
         fi
-        echo "[$TIME] Generating patch list start ... " > $LOGDIR/$LOG_NAME.log
-        echo "[$TIME] changes in project : $REPO_PATH " >> $LOGDIR/$LOG_NAME.log
+        echo "[$(date '+%Y-%m-%d %T')] Generating patch list start ... " > $LOGDIR/$LOG_NAME.log
+        echo "[$(date '+%Y-%m-%d %T')] changes in project : $REPO_PATH " >> $LOGDIR/$LOG_NAME.log
         git log $TAG1..$TAG2 --reverse --no-merges --date=short --pretty=format:"%ad|%H|%an|%cn|%s" --exit-code 1> $PATCH_DIR/$LOG_NAME.patch.list
         echo >> $PATCH_DIR/$LOG_NAME.patch.list
-        echo "[$TIME] output the patch list in $PATCH_DIR/$LOG_NAME.patch.list " >> $LOGDIR/$LOG_NAME.log
-        echo "[$TIME] formating patch in $LOGDIR/patch  ..." >> $LOGDIR/$LOG_NAME.log
-        git format-patch -k $TAG1..$TAG2 -o $LOGDIR/patch/ 1>/dev/null
-        echo "[$TIME] patch file formating ok!! " >> $LOGDIR/$LOG_NAME.log
-        echo "[$TIME] please see the $LOG_NAME.patch.list " >> $LOGDIR/$LOG_NAME.log
-        echo "[$TIME] End generating patch list !!!! " >> $LOGDIR/$LOG_NAME.log
+        echo "[$(date '+%Y-%m-%d %T')] output the patch list in $PATCH_DIR/$LOG_NAME.patch.list " >> $LOGDIR/$LOG_NAME.log
+        echo "[$(date '+%Y-%m-%d %T')] formating patch in $PATCH_DIR/patch/$LOG_NAME  ..." >> $LOGDIR/$LOG_NAME.log
+        if [ ! -d $PATCH_DIR/patch/$LOG_NAME ] ; then
+            mkdir -p $PATCH_DIR/patch/$LOG_NAME
+        fi
+        git format-patch -k $TAG1..$TAG2 -o $PATCH_DIR/patch/$LOG_NAME >/dev/null 2>&1
+        echo "[$(date '+%Y-%m-%d %T')] patch file formating ok!! " >> $LOGDIR/$LOG_NAME.log
+        echo "[$(date '+%Y-%m-%d %T')] please see the $LOG_NAME.patch.list " >> $LOGDIR/$LOG_NAME.log
+        echo "[$(date '+%Y-%m-%d %T')] End generating patch list !!!! " >> $LOGDIR/$LOG_NAME.log
         echo >> $LOGDIR/$LOG_NAME.log
     fi
 }
