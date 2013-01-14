@@ -11,7 +11,7 @@ function getopts_args()
             echo "help !!!!!!!!!!!!!!!!"
             ;;
         l)
-            LOGS=$OPTARG
+            LOGS=$OPTARG/logs
             #echo "out path is $LOGS"
             ;;
          *)
