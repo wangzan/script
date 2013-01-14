@@ -78,14 +78,5 @@ function generating_patch_list()
 }
 
 generating_patch_list
-# start add these patch
-
-
-
-#echo "[$TIME] Start to add these patch to new branch " >> $LOGDIR/$LOG_NAME.log
-#sed -n '$p' logs/patch/kernel.patch.list
-
-
-
 #export FIND_DIFF=$(find_diff)
 #repo forall -c "(generating_patch_list $1 $2 `pwd`)"
