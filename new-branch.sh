@@ -19,8 +19,6 @@ LOG_FILE2=`pwd`/update-$(date '+%Y%m%d%H%M%S').log
 LOG_FILE3=`pwd`/fetch-$(date '+%Y%m%d%H%M%S').log
 
 
-
-
 function do_commit()
 {
 # Generate new manifest xml file.
@@ -34,16 +32,16 @@ function do_commit()
 function do_new()
 {
 	echo "New Log :"
-	repo init -u gitserver:manifests.git -b release -m $MANIFEST 2>&1
+	repo init -u gitserver:manifests.git -b release 2>&1
 	echo "======== repo sync ========"
-	repo sync -d -j4 2>&1
-	echo "======== repo abandon ========"
-	repo abandon $BRANCH_NAME 2>&1
-	echo "======== repo start ========"
-	repo start $BRANCH_NAME --all 2>&1
+	repo sync -d -j4 -m $MANIFEST 2>&1
+#	echo "======== repo abandon ========"
+#	repo abandon $BRANCH_NAME 2>&1
+#	echo "======== repo start ========"
+#	repo start $BRANCH_NAME --all 2>&1
 
 	echo "======== start to push branch  ========"
-	repo forall -c 'echo $REPO_PROJECT; git push gerrit:$REPO_PROJECT $BRANCH_NAME;' 2>&1
+	repo forall -c 'echo $REPO_PROJECT; git push gerrit:$REPO_PROJECT HEAD:$BRANCH_NAME;' 2>&1
 
 	sync
 	# check
@@ -60,7 +58,7 @@ function do_new()
 		echo "================================="
 		repo sync -n -j4 2>&1
 		sync
-		repo forall -c 'if [ -z "`git branch -r | grep -w phicomm\/$BRANCH_NAME\$`" ]; then git push gerrit:$REPO_PROJECT $BRANCH_NAME ; fi ' 2>&1
+		repo forall -c 'if [ -z "`git branch -r | grep -w phicomm\/$BRANCH_NAME\$`" ]; then git push gerrit:$REPO_PROJECT HEAD:$BRANCH_NAME ; fi ' 2>&1
 		sync
 		if [ -z "`repo forall -c 'if [ -z "\`git branch -r | grep -w phicomm\/$BRANCH_NAME\$\`" ]; then echo $REPO_PROJECT ; fi '`" ] ; then
 			echo "success!!!"
@@ -76,7 +74,7 @@ function do_new()
 function do_update()
 {
 	echo "Update Log :"
-	repo forall -c 'if [ -z "`git branch -r | grep -w phicomm\/$BRANCH_NAME\$`" ]; then git push gerrit:$REPO_PROJECT $BRANCH_NAME ; fi ' 2>&1
+	repo forall -c 'if [ -z "`git branch -r | grep -w phicomm\/$BRANCH_NAME\$`" ]; then git push gerrit:$REPO_PROJECT HEAD:$BRANCH_NAME ; fi ' 2>&1
 	sync
 	# check
 	echo "===================================="
@@ -92,7 +90,7 @@ function do_update()
 		echo "================================="
 		repo sync -n -j4 2>&1
 		sync
-		repo forall -c 'if [ -z "`git branch -r | grep -w phicomm\/$BRANCH_NAME\$`" ]; then git push gerrit:$REPO_PROJECT $BRANCH_NAME ; fi ' 2>&1
+		repo forall -c 'if [ -z "`git branch -r | grep -w phicomm\/$BRANCH_NAME\$`" ]; then git push gerrit:$REPO_PROJECT HEAD:$BRANCH_NAME ; fi ' 2>&1
 		sync
 		if [ -z "`repo forall -c 'if [ -z "\`git branch -r | grep -w phicomm\/$BRANCH_NAME\$\`" ]; then echo $REPO_PROJECT ; fi '`" ] ; then
 			echo "success!!!"
