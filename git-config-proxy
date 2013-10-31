@@ -1,0 +1,8 @@
+[http]
+	proxy = http://zan.wang:Phicomm1@172.16.100.47:8080
+	sslVerify = true
+[user]
+	name = zan.wang
+	email = zan_wang@163.com
+[color]
+	diff = always
